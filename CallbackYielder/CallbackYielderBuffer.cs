@@ -14,7 +14,6 @@ namespace CallbackYielder
         public event EventHandler StoppingBuffer;
         public event EventHandler Disposing;
 
-
         public CallbackYielderBuffer(Func<IEnumerable<TItem>> enumerate)
         {
             _enumerate = enumerate;

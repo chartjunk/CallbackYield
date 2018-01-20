@@ -9,6 +9,7 @@ namespace CallbackYielder
     public class CallbackYielderBufferBuilder<TItem>
     {
         private readonly Action<Action<TItem>> _createCallbackMethod;
+        private Action _doFinally;
         internal List<Action<CallbackYielderBuffer<TItem>>> DoOnBufferActions { get; } = new List<Action<CallbackYielderBuffer<TItem>>>();
 
         public CallbackYielderBufferBuilderStopAfterCondition<TItem> StopAfter 
@@ -16,6 +17,12 @@ namespace CallbackYielder
 
         public Func<BlockingCollection<TItem>> InstantiateBufferCollection { get; set; } =
             () => new BlockingCollection<TItem>();
+
+        public CallbackYielderBufferBuilder<TItem> Finally(Action doFinally)
+        {
+            _doFinally = doFinally;
+            return this;
+        }
 
         public CallbackYielderBufferBuilder(Action<Action<TItem>> createCallbackMethod)
         {
@@ -27,6 +34,7 @@ namespace CallbackYielder
             var collection = InstantiateBufferCollection();
             var buffer = new CallbackYielderBuffer<TItem>(collection.GetConsumingEnumerable);
             buffer.StoppingBuffer += (e, a) => collection.CompleteAdding();
+            buffer.Disposing += (e, a) => _doFinally();
             foreach (var action in DoOnBufferActions)
                 action(buffer);
 
