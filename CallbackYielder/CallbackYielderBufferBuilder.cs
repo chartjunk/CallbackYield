@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CallbackYielder
 {
@@ -26,7 +27,8 @@ namespace CallbackYielder
             var collection = InstantiateBufferCollection();
             var buffer = new CallbackYielderBuffer<TItem>(collection.GetConsumingEnumerable);
             buffer.StoppingBuffer += (e, a) => collection.CompleteAdding();
-            DoOnBufferActions.ForEach(action => action(buffer));
+            foreach (var action in DoOnBufferActions)
+                action(buffer);
 
             _createCallbackMethod(item =>
             {
