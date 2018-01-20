@@ -20,6 +20,7 @@ using CallbackYielder;
 
 public List<MyMessage> GetMessages(string[] ids)
 {
+  _client.Open();
   var buffer = CallbackYielderBuilder
     .Buffer<Message>(push =>
       _client.MethodWithACallbackParameter(ids, annoyingCallback: newMessage => push(newMessage))
