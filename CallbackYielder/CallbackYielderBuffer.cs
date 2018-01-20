@@ -11,8 +11,9 @@ namespace CallbackYielder
         public event EventHandler BeforePushingNewItem;
         public event EventHandler AfterPushingNewItem;
         public event EventHandler YieldingItem;
-        public event EventHandler Disposing;
         public event EventHandler StoppingBuffer;
+        public event EventHandler Disposing;
+
 
         public CallbackYielderBuffer(Func<IEnumerable<TItem>> enumerate)
         {
