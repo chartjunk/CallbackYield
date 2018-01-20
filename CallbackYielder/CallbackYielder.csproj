@@ -4,4 +4,23 @@
     <TargetFrameworks>net45;net451;net46;net461;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0</FileVersion>
+    <Authors>Joona Luoma</Authors>
+    <Description>Enumerate items from an arbitrary callback method</Description>
+    <Copyright>Copyright (c) 2018 Joona Luoma</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>CallbackYielder</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageTags>Callback lambda enumerate items event yield async</PackageTags>
+    <PackageLicenseUrl>https://github.com/chartjunk/CallbackYielder/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/chartjunk/CallbackYielder</PackageProjectUrl>
+    <AssemblyName>CallbackYielder</AssemblyName>
+    <RootNamespace>CallbackYielder</RootNamespace>
+  </PropertyGroup>
+
 </Project>
