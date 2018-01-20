@@ -22,7 +22,7 @@ public List<MyMessage> GetMessages(string[] ids)
 {
   _someClient.Open();
   var buffer = CallbackYielderBuilder
-    .Buffer<Message>(push =>
+    .Buffer<MyMessage>(push =>
       _someClient.MethodWithCallback(ids, annoyingCallback: newMessage => push(newMessage))
     .StopAfter.NoYieldSince(seconds: 3600)
     .Finally(() => _someClient.Close())
