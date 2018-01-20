@@ -20,12 +20,12 @@ using CallbackYielder;
 
 public List<MyMessage> GetMessages(string[] ids)
 {
-  _client.Open();
+  _someClient.Open();
   var buffer = CallbackYielderBuilder
     .Buffer<Message>(push =>
-      _client.MethodWithACallbackParameter(ids, annoyingCallback: newMessage => push(newMessage))
+      _someClient.MethodWithCallback(ids, annoyingCallback: newMessage => push(newMessage))
     .StopAfter.NoYieldSince(seconds: 3600)
-    .Finally(() => _client.Close())
+    .Finally(() => _someClient.Close())
     .Build();
     
   return buffer.Enumerate().ToList();
