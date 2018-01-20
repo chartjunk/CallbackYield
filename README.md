@@ -9,4 +9,24 @@ NuGet package (https://www.nuget.org/packages/CallbackYielder/) is available via
 install-package CallbackYielder
 ```
 
+# Tl;dr
+Items are pushed into a buffer and yielded out of the buffer;
 *TODO: Document*
+
+# Example
+
+```C#
+using CallbackYielder;
+
+public List<MyMessage> GetMessages()
+{
+  var buffer = CallbackYielderBuilder
+    .Buffer<Message>(push =>
+      _client.MethodWithACallbackParameter(_someInput, annoyingCallback: newMessage => push(newMessage))
+    .StopAfter.NoYieldSince(seconds: 3600)
+    .Finally(() => _client.Close())
+    .Build();
+    
+  return buffer.Enumerate().ToList();
+}
+```
