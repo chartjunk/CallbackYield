@@ -20,7 +20,7 @@ namespace CallbackYielder.UnitTest
 
         private string CallbackTransform1(string input) => $"output for {input}";
 
-        private async Task MethodWithCallback<T>(IEnumerable<T> inputs, Action<T> callback,
+        private async Task MethodWithCallback<T>(IEnumerable<T> inputs, Func<T, bool> callback,
             Func<T, T> transform)
         {
             await Task.Run(() =>
@@ -37,8 +37,8 @@ namespace CallbackYielder.UnitTest
             var count = MockInputCollectionOf2.Length;
 
             // Act
-            var buffer = new Buffer<string>(async addToBuffer =>
-                    await MethodWithCallback(MockInputCollectionOf2, addToBuffer, CallbackTransform1))
+            var buffer = new Buffer<string>(async push =>
+                    await MethodWithCallback(MockInputCollectionOf2, callback: v => push(v), transform: CallbackTransform1))
                 .StopIf.PushedItemAmountIs(count);
             var items = buffer.Enumerate().ToList();
 
@@ -57,8 +57,8 @@ namespace CallbackYielder.UnitTest
             var collection = Enumerable.Range(1, count);
             
             // Act
-            var buffer = new Buffer<int>(async addToBuffer =>
-                    await MethodWithCallback(collection, addToBuffer, v => v * 2))
+            var buffer = new Buffer<int>(async push =>
+                    await MethodWithCallback(collection, push, v => v * 2))
                 .StopIf.NoPushSince(since);
             var items = buffer.Enumerate().ToList();
 
@@ -75,10 +75,10 @@ namespace CallbackYielder.UnitTest
             var target = new List<string>();
 
             // Act
-            var buffer = new Buffer<string>(addToBuffer =>
+            var buffer = new Buffer<string>(push =>
 #pragma warning disable 4014
                     // Fire and forget an async method
-                    MethodWithCallback(source.GetConsumingEnumerable(), addToBuffer, CallbackTransform1))
+                    MethodWithCallback(source.GetConsumingEnumerable(), push, CallbackTransform1))
 #pragma warning restore 4014
                 .StopIf.NoPushSince(seconds: 2);
 

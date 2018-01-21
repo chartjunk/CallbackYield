@@ -9,7 +9,7 @@ namespace CallbackYielder
 {
     public partial class Buffer<TItem>
     {
-        private readonly Action<Action<TItem>> _createCallbackMethod;
+        private readonly Action<Func<TItem, bool>> _createCallbackMethod;
         private Action _doFinally;
         internal List<Action<Buffer<TItem>>> DoOnBufferActions { get; } = new List<Action<Buffer<TItem>>>();
 
@@ -25,7 +25,7 @@ namespace CallbackYielder
             return this;
         }
 
-        public Buffer(Action<Action<TItem>> createCallbackMethod)
+        public Buffer(Action<Func<TItem, bool>> createCallbackMethod)
         {
             _createCallbackMethod = createCallbackMethod;
         }
@@ -40,9 +40,13 @@ namespace CallbackYielder
 
             _createCallbackMethod(item =>
             {
+                if (collection.IsAddingCompleted)
+                    return false;
+
                 this.InvokeBeforePushingNewItemEvent();
                 collection.Add(item);
                 this.InvokeAfterPushingNewItemEvent();
+                return true;
             });
             // Now items should be getting pushed to the collection asynchronously
 
