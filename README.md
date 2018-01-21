@@ -18,13 +18,14 @@ Items are pushed into a buffer and yielded out of the buffer;
 ```C#
 using CallbackYielder;
 
-public List<MyMessage> GetMessages()
+public List<MyMessage> GetMessages(string[] ids)
 {
+  _someClient.Open();
   var buffer = CallbackYielderBuilder
-    .Buffer<Message>(push =>
-      _client.MethodWithACallbackParameter(_someInput, annoyingCallback: newMessage => push(newMessage))
+    .Buffer<MyMessage>(push =>
+      _someClient.MethodWithCallback(ids, annoyingCallback: newMessage => push(newMessage))
     .StopAfter.NoYieldSince(seconds: 3600)
-    .Finally(() => _client.Close())
+    .Finally(() => _someClient.Close())
     .Build();
     
   return buffer.Enumerate().ToList();
