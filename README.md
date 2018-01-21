@@ -16,12 +16,10 @@ Items are pushed into a buffer and yielded out of the buffer;
 # Example
 
 ```C#
-using CallbackYielder;
-
 public IEnumerable<MyMessage> GetMessages(string[] ids)
 {
   _someClient.Open();
-  var buffer = new Buffer<MyMessage>(push =>
+  var buffer = new CallbackYielder.Buffer<MyMessage>(push =>
       _someClient.MethodWithCallback(ids, annoyingCallback: newMessage => push(newMessage))
     .StopIf.NoPushSince(seconds: 3600)
     .Finally(() => _someClient.Close());
