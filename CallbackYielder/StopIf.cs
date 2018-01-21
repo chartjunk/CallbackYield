@@ -4,31 +4,27 @@ using System.Timers;
 
 namespace CallbackYielder
 {
-    public class CallbackYielderBufferBuilderStopAfterCondition<TItem>
+    public class StopIf<TItem>
     {
-        private readonly CallbackYielderBufferBuilder<TItem> _bufferBuilder;
+        private readonly Buffer<TItem> _bufferBuilder;
 
-        public CallbackYielderBufferBuilderStopAfterCondition(CallbackYielderBufferBuilder<TItem> bufferBuilder)
+        public StopIf(Buffer<TItem> bufferBuilder)
         {
             _bufferBuilder = bufferBuilder;
         }
 
-        public CallbackYielderBufferBuilder<TItem> NoYieldSince(int seconds)
+        public Buffer<TItem> NoPushSince(int seconds)
         {
             var timer = new Timer(seconds * 1000);
             var isEnumerationStarted = false;
             void ResetTimer()
             {
-                if(!isEnumerationStarted)
+                if(isEnumerationStarted)
                     timer.Stop();
                     timer.Start();
             }
             _bufferBuilder.DoOnBufferActions.Add(buffer => buffer.BeforePushingNewItem += (e, a) => ResetTimer());
-            _bufferBuilder.DoOnBufferActions.Add(buffer => buffer.YieldingItem += (e, a) =>
-            {
-                isEnumerationStarted = true;
-                ResetTimer();
-            });
+            _bufferBuilder.DoOnBufferActions.Add(buffer => buffer.YieldingItem += (e, a) => isEnumerationStarted = true);
             _bufferBuilder.DoOnBufferActions.Add(buffer => timer.Elapsed += (e, a) =>
             {
                 timer.Stop();
@@ -38,7 +34,7 @@ namespace CallbackYielder
             return _bufferBuilder;
         }
 
-        public CallbackYielderBufferBuilder<TItem> PushedItemAmountIs(int amount)
+        public Buffer<TItem> PushedItemAmountIs(int amount)
         {
             int currentAmount = 0;
             _bufferBuilder.DoOnBufferActions.Add(buffer => buffer.AfterPushingNewItem += (e, a) =>
