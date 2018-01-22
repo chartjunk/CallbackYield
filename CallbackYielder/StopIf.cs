@@ -30,7 +30,7 @@ namespace CallbackYielder
                 timer.Stop();
                 buffer.StopBufferingNewItems();
             });
-            _bufferBuilder.DoOnBufferActions.Add(buffer => buffer.Disposing += (e, a) => timer.Dispose());
+            _bufferBuilder.DoOnBufferActions.Add(buffer => buffer.StoppingBuffer += (e, a) => timer.Dispose());
             return _bufferBuilder;
         }
 

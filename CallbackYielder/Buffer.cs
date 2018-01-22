@@ -33,8 +33,11 @@ namespace CallbackYielder
         public IEnumerable<TItem> Enumerate()
         {
             var collection = InstantiateBufferCollection();
-            this.StoppingBuffer += (e, a) => collection.CompleteAdding();
-            this.Disposing += (e, a) => _doFinally();
+            this.StoppingBuffer += (e, a) =>
+            {
+                collection.CompleteAdding();
+                _doFinally();
+            };
             foreach (var action in DoOnBufferActions)
                 action(this);
 
